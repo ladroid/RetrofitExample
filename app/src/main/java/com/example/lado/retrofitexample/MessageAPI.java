@@ -13,4 +13,7 @@ public interface MessageAPI {
 
     @GET("employees/{id}")
     Call<Message> getUserById(@Path("id") Integer id);
+
+    @GET("employees/")
+    Call<Message> message();
 }
