@@ -13,6 +13,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.gson.JsonElement;
+
+import org.json.JSONObject;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -25,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
     CheckBox checkId;
     CheckBox checkAll;
+    CheckBox checkJSON;
     TextView output;
     EditText enter;
     Button accept;
@@ -32,7 +37,6 @@ public class MainActivity extends AppCompatActivity {
     private int Id;
     //private Message m;
     private List<String> s;
-    private ViewGroup parent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         checkId = (CheckBox) findViewById(R.id.checkID);
         checkAll = (CheckBox) findViewById(R.id.checkAll);
+        checkJSON = (CheckBox) findViewById(R.id.checkJSON);
         output = (TextView) findViewById(R.id.Output);
         enter = (EditText) findViewById(R.id.enter);
         accept = (Button) findViewById(R.id.accept);
@@ -51,18 +56,22 @@ public class MainActivity extends AppCompatActivity {
                 if(checkId.isChecked()) {
                     startingId();
                 }
-                else {
-                    Toast.makeText(MainActivity.this, "You don't choose anything ",
-                            Toast.LENGTH_SHORT).show();
-                }
 
-                if (checkAll.isChecked()) {
-                    startingAll();
+                if(checkJSON.isChecked()) {
+                    startingJSON();
                 }
-                else {
-                    Toast.makeText(MainActivity.this, "You don't choose anything ",
-                            Toast.LENGTH_SHORT).show();
-                }
+//                else {
+//                    Toast.makeText(MainActivity.this, "You don't choose anything ",
+//                            Toast.LENGTH_SHORT).show();
+//                }
+
+//                if (checkAll.isChecked()) {
+//                    startingAll();
+//                }
+//                else {
+//                    Toast.makeText(MainActivity.this, "You don't choose anything ",
+//                            Toast.LENGTH_SHORT).show();
+//                }
             }
         });
     }
@@ -137,5 +146,38 @@ public class MainActivity extends AppCompatActivity {
                        Toast.LENGTH_SHORT).show();
            }
        });
+    }
+
+    public void startingJSON() {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        MessageAPI messageAPI = retrofit.create(MessageAPI.class);
+
+        Call<JsonElement> call = messageAPI.json();
+
+        call.enqueue(new Callback<JsonElement>() {
+            @Override
+            public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                if(response.isSuccessful()) {
+                    JsonElement jsonElement = response.body();
+                    output.setText(jsonElement.toString());
+                }
+                else {
+                    Log.d("CODE3", "CODE IS " + response.code());
+                    Toast.makeText(MainActivity.this, "CODE IS " +
+                            String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<JsonElement> call, Throwable t) {
+                Log.d("FAIL2", "Fail" + t);
+                Toast.makeText(MainActivity.this, "FAIL",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

@@ -1,5 +1,9 @@
 package com.example.lado.retrofitexample;
 
+import com.google.gson.JsonElement;
+
+import org.json.JSONObject;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -16,4 +20,7 @@ public interface MessageAPI {
 
     @GET("employees/")
     Call<Message> message();
+
+    @GET("employees/")
+    Call<JsonElement> json();
 }

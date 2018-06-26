@@ -17,6 +17,10 @@ public class Message {
     @Expose
     private String email;
 
+    @SerializedName("title")
+    @Expose
+    private String title;
+
     public void setId(Integer id) {
         this.id = id;
     }
@@ -33,6 +37,10 @@ public class Message {
         this.email = email;
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public Integer getId() {
         return id;
     }
@@ -47,5 +55,9 @@ public class Message {
 
     public String getEmail() {
         return email;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
