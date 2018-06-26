@@ -21,6 +21,15 @@ public class Message {
     @Expose
     private String title;
 
+    public Message() { }
+
+    public Message(Integer id, String firstName, String lastName, String email) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+    }
+
     public void setId(Integer id) {
         this.id = id;
     }

@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         accept.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                startNewUser();
                 if(checkId.isChecked()) {
                     startingId();
                 }
@@ -174,7 +175,36 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<JsonElement> call, Throwable t) {
-                Log.d("FAIL2", "Fail" + t);
+                Log.d("FAIL3", "Fail" + t);
+                Toast.makeText(MainActivity.this, "FAIL",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    public void startNewUser() {
+        Retrofit retrofit = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(URL).build();
+        MessageAPI messageAPI = retrofit.create(MessageAPI.class);
+
+        Message m = new Message(7, "Jimmy", "Barton", "jimmybarton@gmail.com");
+        Call<Message> call = messageAPI.setNewUser(m);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.isSuccessful()) {
+                    output.setText(response.body().getId() + " " + response.body().getFirstName() + " " + response.body().getLastName()
+                    + " " + response.body().getEmail());
+                }
+                else {
+                    Log.d("CODE4", "CODE IS " + response.code());
+                    Toast.makeText(MainActivity.this, "CODE IS " +
+                            String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.d("FAIL4", "Fail" + t);
                 Toast.makeText(MainActivity.this, "FAIL",
                         Toast.LENGTH_SHORT).show();
             }
