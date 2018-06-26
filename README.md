@@ -112,6 +112,7 @@ public class Message {
     }
 }
 ```
+The question is why I added annotation, I mean ```@SerializedName("something")``` and ```@Expose```. Well I added it because if you want for example to get info from id then you should do this, add annotations.
 
 And then is connection.
 
@@ -154,4 +155,45 @@ public void startingId() {
     }
 ```
 
-That's all. Thanks.
+Here as you can see at first I added this
+
+```java
+ Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+```
+By this line of code I can connect to my server and then convert JSON to normal view.
+The next code is to get and to work with my data that's why I added this part of code
+
+```java
+MessageAPI messageAPI = retrofit.create(MessageAPI.class);
+Call<Message> messageCall = messageAPI.getUserById(Id);
+        messageCall.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                Message post = response.body();
+                if(response.isSuccessful()) {
+                    output.setText(post.getFirstName() + " " + post.getEmail());
+                }
+                else
+                {
+                    Log.d("CODE1", "CODE IS " + response.code());
+                    Toast.makeText(MainActivity.this, "CODE IS " +
+                            String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.d("FAIL1", "Fail" + t);
+                Toast.makeText(MainActivity.this, "FAIL",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+```
+
+**enqueue(...)** means that everything will be asynchronous. So it will work asynchronous. But if you want that all your "transactions" work synchronous just change **enqueue(...)** on **execute(...)**.
+
+I yhink that's all. Maybe sometimes I will improve my code and this short doc. Thanks.
