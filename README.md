@@ -44,9 +44,9 @@ public interface MessageAPI {
 ```
 
 As you can see we have interface with some methods. Also for this all methods I added annotation. 
-Retrofit has some annotation like: **GET**, **POST**, **HEAD**, **Path**, **PUT** and others. But this annotations are very popular.
+Retrofit has some annotation like: **GET**, **POST**, **HEAD**, **Path**, **PUT**, **BODY** and others. But this annotations are very popular.
 
-Okay, let's go back in my code, I have this ```@GET("employees/") ```. But what is it employees. Well go to my json file and you will see it. In webbrowser it looks like ```http://LOCAL_HOST:3000/employees```.
+Okay, let's go back in my code, I have this ```@GET("employees/") ```. But what is it employees? Well just go to my json file and you will see it. In webbrowser it looks like ```http://LOCAL_HOST:3000/employees```.
 
 The next is make a class which get all thing from json.
 
@@ -196,4 +196,63 @@ Call<Message> messageCall = messageAPI.getUserById(Id);
 
 **enqueue(...)** means that everything will be asynchronous. So it will work asynchronous. But if you want that all your "transactions" work synchronous just change **enqueue(...)** on **execute(...)**.
 
-I yhink that's all. Maybe sometimes I will improve my code and this short doc. Thanks.
+Yesterday I added how to work with **POST** annotation. And now I will talk about it.
+
+So let's start.
+
+As you can see I added 2 constructors. 1-without parameters, 2-with three parameters. Why did I do it? Well, I added it for sending data to my server.
+
+```java
+public Message() { }
+
+public Message(Integer id, String firstName, String lastName, String email) {
+    this.id = id;
+    this.firstName = firstName;
+    this.lastName = lastName;
+    this.email = email;
+}
+```
+
+They are my constructors. Now we can add new annotation for our MessageAPI.
+
+```java
+@POST("employees/")
+Call<Message> setNewUser(@Body Message m);
+```
+
+Cool. The next step is to add in our **MainActivity** new function which will send info about new user. Let's see how it look's like.
+
+```java
+public void startNewUser() {
+        Retrofit retrofit = new Retrofit.Builder().addConverterFactory(GsonConverterFactory.create()).baseUrl(URL).build();
+        MessageAPI messageAPI = retrofit.create(MessageAPI.class);
+
+        Message m = new Message(7, "Jimmy", "Barton", "jimmybarton@gmail.com");
+        Call<Message> call = messageAPI.setNewUser(m);
+        call.enqueue(new Callback<Message>() {
+            @Override
+            public void onResponse(Call<Message> call, Response<Message> response) {
+                if(response.isSuccessful()) {
+                    output.setText(response.body().getId() + " " + response.body().getFirstName() + " " + response.body().getLastName()
+                    + " " + response.body().getEmail());
+                }
+                else {
+                    Log.d("CODE4", "CODE IS " + response.code());
+                    Toast.makeText(MainActivity.this, "CODE IS " +
+                            String.valueOf(response.code()), Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Message> call, Throwable t) {
+                Log.d("FAIL4", "Fail" + t);
+                Toast.makeText(MainActivity.this, "FAIL",
+                        Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+```
+
+As you can see nothing new.)
+
+I think that's all. Maybe sometimes I will improve my code and this short doc. Thanks.
